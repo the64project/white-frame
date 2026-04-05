@@ -6,8 +6,8 @@
     <title>THE WHITE FRAME</title>
     <style>
         :root {
-            --bg-outside: #FFFFFE;
-            --frame-color: #FFFFFF;
+            --bg-outside: #FFFFFF;
+            --frame-color: #F1F1F1;
             --bg-inside: #000000;
             --text-color: #000000;
         }
@@ -26,27 +26,42 @@
             overflow: hidden;
         }
 
-        /* 1. Square - Locked 1:1 */
+        /* 1. Outer Square - The anchor for coordinates */
         .square-wrapper {
             width: 85vw;
             max-width: 420px;
             aspect-ratio: 1 / 1;
-            background-color: var(--bg-inside);
-            border: 36px solid var(--frame-color);
+            background-color: var(--frame-color); /* Matches the border color */
+            padding: 36px; /* This creates the "Frame" effect */
             box-sizing: border-box;
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
             touch-action: none;
-            overflow: hidden; 
         }
 
-        /* Pixel Cursor */
+        /* 2. Inner Black Area - This handles the breathing */
+        @keyframes areaBreathe {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.015); } /* Approx 2px expansion */
+            100% { transform: scale(1); }
+        }
+
+        .breathing-inner {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-inside);
+            position: relative;
+            overflow: hidden;
+            animation: areaBreathe 6s infinite ease-in-out;
+            pointer-events: none; /* Let clicks pass through to wrapper */
+        }
+
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 2. Breathing Animation */
+        /* 3. Pixel Breathing Animation */
         @keyframes breathe {
             0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 1; transform: translate(-50%, -50%) scale(2); }
@@ -61,9 +76,10 @@
             pointer-events: none;
             animation: breathe 3s infinite ease-in-out;
             transform-origin: center;
+            z-index: 10;
         }
 
-        /* 3. Text Area */
+        /* 4. Text Area */
         .content-area {
             text-align: center;
             color: var(--text-color);
@@ -77,7 +93,6 @@
             margin-bottom: 8px;
             font-weight: bold;
             font-size: 1.1rem;
-            letter-spacing: -0.02em;
         }
 
         .message-body {
@@ -86,7 +101,7 @@
             font-weight: 300;
         }
 
-        /* 4. Language Buttons */
+        /* 5. Language Buttons */
         .lang-nav {
             margin-top: 15px;
             display: flex;
@@ -104,7 +119,6 @@
             cursor: pointer;
             font-size: 0.6rem;
             font-weight: bold;
-            transition: 0.2s;
         }
 
         .lang-btn.active {
@@ -113,15 +127,16 @@
         }
 
         @media (max-width: 600px) {
-            .square-wrapper { border-width: 24px; width: 75vw; }
-            .content-area { margin-top: 12px; }
+            .square-wrapper { padding: 24px; width: 75vw; }
         }
     </style>
 </head>
 <body>
 
     <div class="square-wrapper" id="canvas">
-        <div class="pixel" style="top: 50%; left: 50%;"></div>
+        <div class="breathing-inner" id="inner-canvas">
+            <div class="pixel" style="top: 50%; left: 50%;"></div>
+        </div>
     </div>
 
     <div class="content-area">
@@ -139,8 +154,8 @@
             ge: { name: "GE", title: "გილოცავთ, თქვენ ხედავთ სიბნელეში...", body: "თქვენ აღმოაჩინეთ მშვიდობის პირველი პიქსელი, რომელიც არ არის ვინმეს მიერ მოცემული, არამედ საკუთარი ხელით შექმნილი. გაიტანეთ ეს ჩარჩო ფიზიკურ სამყაროში და შექმენით თქვენი სიმართლე." },
             ms: { name: "MS", title: "გოხიოლათ, თქვა თოლს ორწყეთ უკუმელას...", body: "თქვა ქოძირით შვიდობაშ მაართა პიქსელი, ნამუთ მიდგაინშა ვარე მოჩამილი, ვარინ დორხველი ხეთ რე აშენებული. გეგიღით თე ჩარჩო ფიზიკურ ოქიანუშა დო ქაქიმინით თქვანი სიმართლე." },
             sv: { name: "SV", title: "ხოშჩამი, თქვი თოლოლ ხეკვედ მიკუმუელხოლ...", body: "თქვი ანწხერით მშვიდობის მაართა პიქსელი, მარა დემეშ მიერ მოჩამულდჷ, არამედ ხოშა ხეთ შენებულდჷ. ანღვიეთ ეს ჩარჩო ფიზიკურ სამყაროხოლ და ქოქიმინეთ თქვანი სიმართლე." },
-            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыბлахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанзаалак ауаҩы ииҭаз акәымкәа, шәара шәхы инапала ишәыҟаҵаз. Шәга ари арамка аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
-            os: { name: "OS", title: "Арфӕ кӕнӕм, сымах талынгты уынут...", body: "Сымах ссардтат фарны фыццаг пиксель, кӕцы никӕй лӕвӕрд у, фӕлӕ уӕхи кӕуыл арӕзт. Ацы рамкӕ физикон дунемӕ рахӕссут ӕмӕ уӕхи рӕстдзинад саразут." },
+            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыблахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанზაалак ауаҩы ииҭაზ акәымкәა, шәара шәхы инапала ишәыҟаҵаз. Шәга ари арамკа аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
+            os: { name: "OS", title: "Арфӕ кӕнӕм, сымах талынгты уынут...", body: "Сымах სსარდтат фарны ფыццаგ пиკსელ, კӕцы ნიკӕი лӕвӕрд უ, ფӕлӕ უӕხი კӕუыл არӕზტ. აцы рамკӕ ფიზიკონ დუნემӕ რაჰӕსსუტ ӕმӕ უӕხი рӕსტდზინად სარაზუტ." },
             ua: { name: "UA", title: "Вітаємо, ви бачите крізь темряву...", body: "Ви знайшли перший піксель миру, який будується власноруч. Цей цифровий квадрат більше не є порожнечею. Винесіть цю рамку у фізичний світ і визначте власну правду." },
             es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío. Lleva este marco al mundo físico y define tu propia verdad." },
             fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide. Portez ce cadre dans le monde physique et définissez votre vérité." },
@@ -150,31 +165,33 @@
         };
 
         const canvas = document.getElementById('canvas');
+        const innerCanvas = document.getElementById('inner-canvas');
 
         function addPixel(clientX, clientY) {
             const rect = canvas.getBoundingClientRect();
-            const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
+            const innerRect = innerCanvas.getBoundingClientRect();
             
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
+            // We measure relative to the INNER canvas for absolute placement
+            const x = clientX - innerRect.left;
+            const y = clientY - innerRect.top;
 
-            // Only add pixel if inside the black inner area
-            if (x > borderSize && x < rect.width - borderSize && y > borderSize && y < rect.height - borderSize) {
+            // Only add if within the actual black area
+            if (x >= 0 && x <= innerRect.width && y >= 0 && y <= innerRect.height) {
                 const pixel = document.createElement('div');
                 pixel.className = 'pixel';
-                pixel.style.left = x + 'px';
-                pixel.style.top = y + 'px';
+                // Using percentage for placement ensures they stay relative during breathing
+                pixel.style.left = (x / innerRect.width * 100) + '%';
+                pixel.style.top = (y / innerRect.height * 100) + '%';
                 
                 const duration = (Math.random() * 2 + 2).toFixed(2);
                 pixel.style.animationDuration = `${duration}s`;
                 pixel.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
                 
-                canvas.appendChild(pixel);
+                innerCanvas.appendChild(pixel);
             }
         }
 
         canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
-        
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             addPixel(touch.clientX, touch.clientY);
