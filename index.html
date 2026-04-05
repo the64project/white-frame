@@ -21,13 +21,13 @@
             background-color: var(--bg-outside);
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             display: grid;
-            grid-template-rows: 1fr auto auto; /* Square | Text | Buttons */
+            grid-template-rows: 1fr auto auto;
             align-items: center;
             justify-items: center;
             overflow-x: hidden;
         }
 
-        /* 2. The Square - Fixed Aspect Ratio */
+        /* 2. The Square */
         .square-wrapper {
             width: 85vw;
             max-width: 450px;
@@ -38,36 +38,31 @@
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
-            touch-action: none; /* Prevents mobile scrolling while tapping */
+            touch-action: none;
         }
 
-        /* 3. Pixel Cursor for Desktop */
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 4. The initial white pixel */
-        .initial-pixel {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: #FFFFFF;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 2;
+        /* 3. Breathing Animation */
+        @keyframes breathe {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
         }
 
-        .added-pixel {
+        .pixel {
             position: absolute;
             width: 2px;
             height: 2px;
             background-color: #FFFFFF;
             pointer-events: none;
+            /* Default breathing for the initial dot */
+            animation: breathe 3s infinite ease-in-out;
         }
 
-        /* 5. Text Area - Moved to white space */
+        /* 4. Text Area */
         .content-area {
             text-align: center;
             color: var(--text-color);
@@ -89,7 +84,7 @@
             font-weight: 300;
         }
 
-        /* 6. Language Buttons */
+        /* 5. Language Buttons */
         .lang-nav {
             display: flex;
             justify-content: center;
@@ -114,17 +109,14 @@
         }
 
         @media (max-width: 600px) {
-            .square-wrapper { 
-                border-width: 24px; 
-                width: 80vw;
-            }
+            .square-wrapper { border-width: 24px; width: 80vw; }
         }
     </style>
 </head>
 <body>
 
     <div class="square-wrapper" id="canvas">
-        <div class="initial-pixel"></div>
+        <div class="pixel" style="top: 50%; left: 50%;"></div>
     </div>
 
     <div class="content-area">
@@ -155,25 +147,26 @@
         function addPixel(clientX, clientY) {
             const rect = canvas.getBoundingClientRect();
             const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
-            
-            // Precise coordinate math
             const x = clientX - rect.left;
             const y = clientY - rect.top;
 
-            // Check if click is inside the black inner square boundaries
             if (x > borderSize && x < rect.width - borderSize && y > borderSize && y < rect.height - borderSize) {
                 const pixel = document.createElement('div');
-                pixel.className = 'added-pixel';
+                pixel.className = 'pixel';
                 pixel.style.left = x + 'px';
                 pixel.style.top = y + 'px';
+                
+                // Randomize breathing pace (between 2s and 4.5s)
+                const duration = (Math.random() * 2.5 + 2).toFixed(2);
+                pixel.style.animationDuration = `${duration}s`;
+                // Randomize start delay so they don't pulse together
+                pixel.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
+                
                 canvas.appendChild(pixel);
             }
         }
 
-        // Desktop Listener
         canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
-        
-        // Mobile Listener
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             addPixel(touch.clientX, touch.clientY);
@@ -182,10 +175,8 @@
         function setLang(lang) {
             document.getElementById('title').innerText = translations[lang].title;
             document.getElementById('body').innerText = translations[lang].body;
-            
             const content = document.getElementById('content');
             content.style.direction = (lang === 'ar' || lang === 'he') ? 'rtl' : 'ltr';
-
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.id === lang);
             });
