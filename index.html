@@ -26,11 +26,11 @@
             overflow-x: hidden;
         }
 
-        /* 1. The Square and Frame */
+        /* 1. The Square - Forced 1:1 Aspect Ratio */
         .square-wrapper {
             width: 90vw;
             max-width: 500px;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1 / 1; /* This ensures it is always a square */
             background-color: var(--bg-inside);
             border: 36px solid var(--frame-color);
             display: flex;
@@ -40,12 +40,12 @@
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
-            overflow: hidden; /* Keeps pixels inside */
+            overflow: hidden; 
+            touch-action: none; /* Prevents scrolling while drawing pixels on mobile */
         }
 
-        /* 2. Pixel Cursor - Only visible over the black area */
+        /* 2. Pixel Cursor for Desktop */
         .square-wrapper:hover {
-            /* We hide the real cursor and use a CSS-generated one */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
@@ -71,46 +71,46 @@
             pointer-events: none;
         }
 
-        /* 5. Text below the square */
+        /* 5. Text Area Below */
         .content-area {
             text-align: center;
             color: var(--text-color);
             max-width: 600px;
-            margin-top: 50px;
+            margin-top: 40px;
             padding: 0 20px;
         }
 
         .message-title {
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: bold;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             line-height: 1.2;
             letter-spacing: -0.5px;
         }
 
         .message-body {
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.6;
             font-weight: 300;
         }
 
         .lang-nav {
-            margin-top: 40px;
+            margin-top: 30px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
-            padding-bottom: 50px;
+            gap: 8px;
+            padding-bottom: 40px;
         }
 
         .lang-btn {
             background: #ffffff;
             border: 1px solid #000000;
             color: #000000;
-            padding: 6px 14px;
+            padding: 5px 12px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             transition: all 0.2s ease;
         }
@@ -120,6 +120,7 @@
             color: #ffffff;
         }
 
+        /* Adjust border for smaller screens to keep inner area usable */
         @media (max-width: 600px) {
             .square-wrapper { border-width: 24px; }
             .message-title { font-size: 1.1rem; }
@@ -152,7 +153,7 @@
             de: { name: "DE", title: "Herzlichen Glückwunsch, Sie sehen durch die Dunkelheit.", body: "Sie haben das erste Pixel eines Friedens entdeckt, der von Hand gebaut wird. Dieses Quadrat ist keine Leere mehr. Bringen Sie diesen Rahmen in die Welt und definieren Sie Ihre eigene Wahrheit." },
             it: { name: "IT", title: "Congratulazioni, riesci a vedere attraverso l'oscurità.", body: "Hai scoperto il primo pixel di una pace costruita a mano. Questo quadrato non è più un vuoto. Porta questa cornice nel mondo fisico e definisci la tua verità." },
             ar: { name: "AR", title: "تهانينا، يمكنك الرؤية من خلال الظلام", body: "لقد اكتشفت البكسل الأول لسلام يُبنى باليد. هذا المربع لم يعد فراغاً، بل لوحة لمنظورك. خذ هذا الإطار إلى العالم المادي وحدد حقيقتك الخاصة." },
-            he: { name: "HE", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד. הריבוע הזה אינו עוד ריק, אלא קנბס לנקודת המבט שלך. קח את המסגרת הזו לעולם הפיזי והגדר את האמת שלך." },
+            he: { name: "HE", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד. הריבוע הזה אינו עוד ריק, אלא קנבס לנקודת המבט שלך. קח את המסגרת הזו לעולם הפיזי והגדר את האמת שלך." },
             zh: { name: "ZH", title: "恭喜你，你看穿了黑暗。", body: "你发现了一个亲手构建的和平的第一个像素。这个数字方块不再是真空。将这个框架带入现实世界，定义你自己的真相。" }
         };
 
@@ -162,30 +163,29 @@
             const rect = canvas.getBoundingClientRect();
             const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
             
-            // Calculate coordinates relative to the START of the black box
-            // We subtract the rect position AND the border width to get (0,0) at the top-left of the black area
+            // X and Y relative to the absolute top-left of the black area
             const x = clientX - rect.left - borderSize;
             const y = clientY - rect.top - borderSize;
 
             const innerWidth = rect.width - (borderSize * 2);
             const innerHeight = rect.height - (borderSize * 2);
 
-            // Add pixel only if within the black boundaries
+            // Bounds check for the black area
             if (x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight) {
                 const pixel = document.createElement('div');
                 pixel.className = 'added-pixel';
-                // Position absolute relative to the square-wrapper (which includes the border)
-                pixel.style.left = `${x + borderSize}px`;
-                pixel.style.top = `${y + borderSize}px`;
+                pixel.style.left = (x + borderSize) + 'px';
+                pixel.style.top = (y + borderSize) + 'px';
                 canvas.appendChild(pixel);
             }
         }
 
         canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
+        
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             addPixel(touch.clientX, touch.clientY);
-        });
+        }, { passive: false });
 
         function setLang(lang) {
             document.getElementById('title').innerText = translations[lang].title;
