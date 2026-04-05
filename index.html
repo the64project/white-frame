@@ -26,7 +26,6 @@
             overflow: hidden;
         }
 
-        /* 1. Square Container - Ensures 1:1 on all screens */
         .square-container {
             width: 85vw;
             max-width: 420px;
@@ -37,7 +36,6 @@
             align-items: center;
         }
 
-        /* The Frame itself */
         .square-wrapper {
             width: 100%;
             height: 100%;
@@ -50,10 +48,9 @@
             touch-action: none;
         }
 
-        /* 2. Inner Black Area - Breathing Enhanced to ~5px */
         @keyframes areaBreathe {
             0% { transform: scale(1); }
-            50% { transform: scale(1.03); } /* Enhanced breathing spread */
+            50% { transform: scale(1.03); } 
             100% { transform: scale(1); }
         }
 
@@ -71,7 +68,6 @@
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 3. Pixel Breathing */
         @keyframes breathe {
             0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 1; transform: translate(-50%, -50%) scale(2); }
@@ -89,7 +85,6 @@
             z-index: 10;
         }
 
-        /* 4. Text Area */
         .content-area {
             text-align: center;
             color: var(--text-color);
@@ -111,14 +106,15 @@
             font-weight: 300;
         }
 
-        /* 5. Language Buttons */
         .lang-nav {
             margin-top: 20px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 6px;
-            padding-bottom: 20px;
+            padding: 10px 20px 40px 20px;
+            overflow-y: auto; /* Allows scrolling if list is too long */
+            max-height: 150px;
         }
 
         .lang-btn {
@@ -127,7 +123,7 @@
             color: #000000;
             padding: 4px 8px;
             cursor: pointer;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: bold;
         }
 
@@ -163,19 +159,123 @@
     <nav class="lang-nav" id="btn-container"></nav>
 
     <script>
+        // Placeholder text for new languages. You can update these individually.
+        const d_t = "Congratulations, you can see through the darkness.";
+        const d_b = "You have discovered the first pixel of a peace that isn't handed down, but built by hand. This digital square is no longer a void, but a canvas for your perspective. Take this frame into the physical world and define your own truth.";
+
         const translations = {
-            en: { name: "EN", title: "Congratulations, you can see through the darkness.", body: "You have discovered the first pixel of a peace that isn't handed down, but built by hand. This digital square is no longer a void, but a canvas for your perspective. Take this frame into the physical world and define your own truth." },
+            // Priority Languages
+            en: { name: "EN", title: d_t, body: d_b },
             ge: { name: "GE", title: "გილოცავთ, თქვენ ხედავთ სიბნელეში...", body: "თქვენ აღმოაჩინეთ მშვიდობის პირველი პიქსელი, რომელიც არ არის ვინმეს მიერ მოცემული, არამედ საკუთარი ხელით შექმნილი. გაიტანეთ ეს ჩარჩო ფიზიკურ სამყაროში და შექმენით თქვენი სიმართლე." },
             ms: { name: "MS", title: "გოხიოლათ, თქვა თოლს ორწყეთ უკუმელას...", body: "თქვა ქოძირით შვიდობაშ მაართა პიქსელი, ნამუთ მიდგაინშა ვარე მოჩამილი, ვარინ დორხველი ხეთ რე აშენებული. გეგიღით თე ჩარჩო ფიზიკურ ოქიანუშა დო ქაქიმინით თქვანი სიმართლე." },
             sv: { name: "SV", title: "ხოშჩამი, თქვი თოლოლ ხეკვედ მიკუმუელხოლ...", body: "თქვი ანწხერით მშვიდობის მაართა პიქსელი, მარა დემეშ მიერ მოჩამულდჷ, არამედ ხოშა ხეთ შენებულდჷ. ანღვიეთ ეს ჩარჩო ფიზიკურ სამყაროხოლ და ქოქიმინეთ თქვანი სიმართლე." },
-            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыблахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанзаалак ауаҩы ииҭაზ акәымкәა, шәара шәхы инапала ишәыҟаҵаз. Шәга ари арамка аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
+            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыблахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанзаалак ауაҩы ииҭაზ акәымкәა, шәара шәхы инапала ишәыҟაҵაზ. Шәга ари აрамка аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
             os: { name: "OS", title: "Арфӕ кӕнӕм, сымах талынгты уынут...", body: "Сымах სსარდтат фарны ფыццаგ пиკსელ, კӕцы ნიკӕი лӕвӕрд უ, ფӕлӕ უӕხი კӕუыл არӕზტ. აცი რამკӕ ფიზიიკონ დუნემӕ რაჰӕსსუტ ӕმӕ უӕხი рӕსტდზინად სარაზუტ." },
             ua: { name: "UA", title: "Вітаємо, ви бачите крізь темряву...", body: "Ви знайшли перший піксель миру, який будується власноруч. Цей цифровий квадрат більше не є порожнечею. Винесіть цю рамку у фізичний світ і визначте власну правду." },
-            es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío. Lleva este marco al mundo físico y define tu propia verdad." },
-            fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide. Portez ce cadre dans le monde physique et définissez votre vérité." },
-            ar: { name: "AR", title: "تهانينا، يمكنك الرؤية من خلال الظلام", body: "لقد اكتشفت البكسل الأول لسلام يُبنى باليد. هذا المربع لم يعد فراغاً، بل لوحة لمنظورك. خذ هذا الإطار إلى العالم المادي وحدد حقيقتك الخاصة." },
-            he: { name: "HE", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד. הריבוע הזה אינו עוד ריק. קח את המסגרת הזו לעולם הפיזי והגדר את האמת שלך." },
-            zh: { name: "ZH", title: "恭喜你，你看穿了黑暗。", body: "你发现了一个亲手构建的和平的第一个像素。这个数字方块不再是真空。将这个框架带入现实世界，定义你自己的真相。" }
+            
+            // Expanded List
+            af: { name: "Afrikaans", title: d_t, body: d_b },
+            sq: { name: "Albanian", title: d_t, body: d_b },
+            am: { name: "Amharic", title: d_t, body: d_b },
+            ar: { name: "Arabic", title: "تهانينا، يمكنك الرؤية من خلال الظلام", body: "لقد اكتشفت البكسل الأول لسلام يُبنى باليد. هذا المربع لم يعد فراغاً، بل لوحة لمنظورك. خذ هذا الإطار إلى العالم المادي وحدد حقيقتك الخاصة." },
+            hy_e: { name: "Armenian (Eastern)", title: d_t, body: d_b },
+            hy_w: { name: "Armenian (Western)", title: d_t, body: d_b },
+            az: { name: "Azerbaijani", title: d_t, body: d_b },
+            bas: { name: "Bassa", title: d_t, body: d_b },
+            be: { name: "Belarusian", title: d_t, body: d_b },
+            bn: { name: "Bengali", title: d_t, body: d_b },
+            bs: { name: "Bosnian", title: d_t, body: d_b },
+            brl: { name: "Braille", title: d_t, body: d_b },
+            bg: { name: "Bulgarian", title: d_t, body: d_b },
+            my: { name: "Burmese", title: d_t, body: d_b },
+            km: { name: "Cambodian", title: d_t, body: d_b },
+            cpv: { name: "Cape Verde Creole", title: d_t, body: d_b },
+            ceb: { name: "Cebuano", title: d_t, body: d_b },
+            zh_s: { name: "Chinese (Simp)", title: d_t, body: d_b },
+            zh_t: { name: "Chinese (Trad)", title: d_t, body: d_b },
+            chk: { name: "Chuukese", title: d_t, body: d_b },
+            hr: { name: "Croatian", title: d_t, body: d_b },
+            cs: { name: "Czech", title: d_t, body: d_b },
+            da: { name: "Danish", title: d_t, body: d_b },
+            prs: { name: "Dari", title: d_t, body: d_b },
+            nl: { name: "Dutch", title: d_t, body: d_b },
+            et: { name: "Estonian", title: d_t, body: d_b },
+            fa: { name: "Farsi", title: d_t, body: d_b },
+            fi: { name: "Finnish", title: d_t, body: d_b },
+            vls: { name: "Flemmish", title: d_t, body: d_b },
+            fr_c: { name: "French (Can)", title: d_t, body: d_b },
+            fr_f: { name: "French (Fra)", title: d_t, body: d_b },
+            ff: { name: "Fulani", title: d_t, body: d_b },
+            de: { name: "German", title: d_t, body: d_b },
+            el: { name: "Greek", title: d_t, body: d_b },
+            gu: { name: "Gujarati", title: d_t, body: d_b },
+            ht: { name: "Haitian Creole", title: d_t, body: d_b },
+            hak_c: { name: "Hakha Chin", title: d_t, body: d_b },
+            hak_h: { name: "Hakka", title: d_t, body: d_b },
+            he: { name: "Hebrew", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד." },
+            hi: { name: "Hindi", title: d_t, body: d_b },
+            hmn: { name: "Hmong", title: d_t, body: d_b },
+            hu: { name: "Hungarian", title: d_t, body: d_b },
+            is: { name: "Icelandic", title: d_t, body: d_b },
+            ig: { name: "Igbo", title: d_t, body: d_b },
+            ilo: { name: "Ilocano", title: d_t, body: d_b },
+            hil: { name: "Ilonggo", title: d_t, body: d_b },
+            id: { name: "Indonesian", title: d_t, body: d_b },
+            it: { name: "Italian", title: d_t, body: d_b },
+            ja: { name: "Japanese", title: d_t, body: d_b },
+            jv: { name: "Javanese", title: d_t, body: d_b },
+            kn: { name: "Kannada", title: d_t, body: d_b },
+            kar: { name: "Karen", title: d_t, body: d_b },
+            kk: { name: "Kazakh", title: d_t, body: d_b },
+            rw: { name: "Kinyarwanda", title: d_t, body: d_b },
+            rn: { name: "Kirundi", title: d_t, body: d_b },
+            ko: { name: "Korean", title: d_t, body: d_b },
+            ku_k: { name: "Kurdish (Kur)", title: d_t, body: d_b },
+            ku_s: { name: "Kurdish (Sor)", title: d_t, body: d_b },
+            ky: { name: "Kyrgyz", title: d_t, body: d_b },
+            lo: { name: "Lao", title: d_t, body: d_b },
+            lv: { name: "Latvian", title: d_t, body: d_b },
+            lt: { name: "Lithuanian", title: d_t, body: d_b },
+            mk: { name: "Macedonian", title: d_t, body: d_b },
+            ms_m: { name: "Malay", title: d_t, body: d_b },
+            mnk: { name: "Mandinka", title: d_t, body: d_b },
+            mr: { name: "Marathi", title: d_t, body: d_b },
+            mh: { name: "Marshallese", title: d_t, body: d_b },
+            ium: { name: "Mien", title: d_t, body: d_b },
+            mn: { name: "Mongolian", title: d_t, body: d_b },
+            cnr: { name: "Montenegrin", title: d_t, body: d_b },
+            nv: { name: "Navajo", title: d_t, body: d_b },
+            ne: { name: "Nepali", title: d_t, body: d_b },
+            no: { name: "Norwegian", title: d_t, body: d_b },
+            om: { name: "Oromo", title: d_t, body: d_b },
+            ps: { name: "Pashto", title: d_t, body: d_b },
+            pl: { name: "Polish", title: d_t, body: d_b },
+            pt_b: { name: "Portuguese (Br)", title: d_t, body: d_b },
+            pt_p: { name: "Portuguese (Pt)", title: d_t, body: d_b },
+            pa: { name: "Punjabi", title: d_t, body: d_b },
+            roh: { name: "Rohingya", title: d_t, body: d_b },
+            ro: { name: "Romanian", title: d_t, body: d_b },
+            ru: { name: "Russian", title: d_t, body: d_b },
+            sr: { name: "Serbian", title: d_t, body: d_b },
+            sk: { name: "Slovak", title: d_t, body: d_b },
+            sl: { name: "Slovenian", title: d_t, body: d_b },
+            so: { name: "Somali", title: d_t, body: d_b },
+            es_c: { name: "Spanish (Cas)", title: d_t, body: d_b },
+            es_l: { name: "Spanish (Lat)", title: d_t, body: d_b },
+            sw: { name: "Swahili", title: d_t, body: d_b },
+            sv_s: { name: "Swedish", title: d_t, body: d_b },
+            tl: { name: "Tagalog", title: d_t, body: d_b },
+            ta: { name: "Tamil", title: d_t, body: d_b },
+            te: { name: "Telugu", title: d_t, body: d_b },
+            th: { name: "Thai", title: d_t, body: d_b },
+            bo: { name: "Tibetan", title: d_t, body: d_b },
+            ti: { name: "Tigrinya", title: d_t, body: d_b },
+            tr: { name: "Turkish", title: d_t, body: d_b },
+            ur: { name: "Urdu", title: d_t, body: d_b },
+            uz: { name: "Uzbek", title: d_t, body: d_b },
+            vi: { name: "Vietnamese", title: d_t, body: d_b },
+            wo: { name: "Wolof", title: d_t, body: d_b },
+            yo: { name: "Yoruba", title: d_t, body: d_b }
         };
 
         const canvas = document.getElementById('canvas');
@@ -183,22 +283,17 @@
 
         function addPixel(clientX, clientY) {
             const innerRect = innerCanvas.getBoundingClientRect();
-            
             const x = clientX - innerRect.left;
             const y = clientY - innerRect.top;
 
-            // Coordinate check relative to current inner area size
             if (x >= 0 && x <= innerRect.width && y >= 0 && y <= innerRect.height) {
                 const pixel = document.createElement('div');
                 pixel.className = 'pixel';
-                // Using percentage ensures the dot moves WITH the breathing area
                 pixel.style.left = (x / innerRect.width * 100) + '%';
                 pixel.style.top = (y / innerRect.height * 100) + '%';
-                
                 const duration = (Math.random() * 2 + 2).toFixed(2);
                 pixel.style.animationDuration = `${duration}s`;
                 pixel.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
-                
                 innerCanvas.appendChild(pixel);
             }
         }
