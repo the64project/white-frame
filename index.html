@@ -26,13 +26,23 @@
             overflow: hidden;
         }
 
-        /* 1. Outer Square - The anchor for coordinates */
-        .square-wrapper {
+        /* 1. Square Container - Ensures 1:1 on all screens */
+        .square-container {
             width: 85vw;
             max-width: 420px;
+            position: relative;
             aspect-ratio: 1 / 1;
-            background-color: var(--frame-color); /* Matches the border color */
-            padding: 36px; /* This creates the "Frame" effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The Frame itself */
+        .square-wrapper {
+            width: 100%;
+            height: 100%;
+            background-color: var(--frame-color);
+            padding: 36px;
             box-sizing: border-box;
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
@@ -40,10 +50,10 @@
             touch-action: none;
         }
 
-        /* 2. Inner Black Area - This handles the breathing */
+        /* 2. Inner Black Area - Breathing Enhanced to ~5px */
         @keyframes areaBreathe {
             0% { transform: scale(1); }
-            50% { transform: scale(1.015); } /* Approx 2px expansion */
+            50% { transform: scale(1.03); } /* Enhanced breathing spread */
             100% { transform: scale(1); }
         }
 
@@ -53,15 +63,15 @@
             background-color: var(--bg-inside);
             position: relative;
             overflow: hidden;
-            animation: areaBreathe 6s infinite ease-in-out;
-            pointer-events: none; /* Let clicks pass through to wrapper */
+            animation: areaBreathe 5s infinite ease-in-out;
+            pointer-events: none;
         }
 
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 3. Pixel Breathing Animation */
+        /* 3. Pixel Breathing */
         @keyframes breathe {
             0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 1; transform: translate(-50%, -50%) scale(2); }
@@ -84,7 +94,7 @@
             text-align: center;
             color: var(--text-color);
             max-width: 500px;
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 0 20px;
         }
 
@@ -103,11 +113,11 @@
 
         /* 5. Language Buttons */
         .lang-nav {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 6px;
             padding-bottom: 20px;
         }
 
@@ -115,9 +125,9 @@
             background: #ffffff;
             border: 1px solid #000000;
             color: #000000;
-            padding: 3px 7px;
+            padding: 4px 8px;
             cursor: pointer;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             font-weight: bold;
         }
 
@@ -127,15 +137,19 @@
         }
 
         @media (max-width: 600px) {
-            .square-wrapper { padding: 24px; width: 75vw; }
+            .square-wrapper { padding: 24px; }
+            .square-container { width: 75vw; }
+            .content-area { margin-top: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="square-wrapper" id="canvas">
-        <div class="breathing-inner" id="inner-canvas">
-            <div class="pixel" style="top: 50%; left: 50%;"></div>
+    <div class="square-container">
+        <div class="square-wrapper" id="canvas">
+            <div class="breathing-inner" id="inner-canvas">
+                <div class="pixel" style="top: 50%; left: 50%;"></div>
+            </div>
         </div>
     </div>
 
@@ -154,8 +168,8 @@
             ge: { name: "GE", title: "გილოცავთ, თქვენ ხედავთ სიბნელეში...", body: "თქვენ აღმოაჩინეთ მშვიდობის პირველი პიქსელი, რომელიც არ არის ვინმეს მიერ მოცემული, არამედ საკუთარი ხელით შექმნილი. გაიტანეთ ეს ჩარჩო ფიზიკურ სამყაროში და შექმენით თქვენი სიმართლე." },
             ms: { name: "MS", title: "გოხიოლათ, თქვა თოლს ორწყეთ უკუმელას...", body: "თქვა ქოძირით შვიდობაშ მაართა პიქსელი, ნამუთ მიდგაინშა ვარე მოჩამილი, ვარინ დორხველი ხეთ რე აშენებული. გეგიღით თე ჩარჩო ფიზიკურ ოქიანუშა დო ქაქიმინით თქვანი სიმართლე." },
             sv: { name: "SV", title: "ხოშჩამი, თქვი თოლოლ ხეკვედ მიკუმუელხოლ...", body: "თქვი ანწხერით მშვიდობის მაართა პიქსელი, მარა დემეშ მიერ მოჩამულდჷ, არამედ ხოშა ხეთ შენებულდჷ. ანღვიეთ ეს ჩარჩო ფიზიკურ სამყაროხოლ და ქოქიმინეთ თქვანი სიმართლე." },
-            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыблахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанზაалак ауаҩы ииҭაზ акәымкәა, шәара шәхы инапала ишәыҟаҵаз. Шәга ари арамკа аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
-            os: { name: "OS", title: "Арфӕ кӕнӕм, сымах талынгты уынут...", body: "Сымах სსარდтат фарны ფыццаგ пиკსელ, კӕцы ნიკӕი лӕвӕрд უ, ფӕлӕ უӕხი კӕუыл არӕზტ. აцы рамკӕ ფიზიკონ დუნემӕ რაჰӕსსუტ ӕმӕ უӕხი рӕსტდზინად სარაზუტ." },
+            ab: { name: "AB", title: "Ишәыданыҳәალოит, шәара лашьцара шәыблахьцоит...", body: "Шәара ишәбааит аиқәшаҳарахь иазку апиқსель, иарбанзаалак ауаҩы ииҭაზ акәымкәა, шәара шәхы инапала ишәыҟаҵаз. Шәга ари арамка аԥсҭазааратә дунеи ахь, шәхатәы иаартра шәыҟаҵа." },
+            os: { name: "OS", title: "Арфӕ кӕнӕм, сымах талынгты уынут...", body: "Сымах სსარდтат фарны ფыццаგ пиკსელ, კӕцы ნიკӕი лӕвӕрд უ, ფӕлӕ უӕხი კӕუыл არӕზტ. აცი რამკӕ ფიზიიკონ დუნემӕ რაჰӕსსუტ ӕმӕ უӕხი рӕსტდზინად სარაზუტ." },
             ua: { name: "UA", title: "Вітаємо, ви бачите крізь темряву...", body: "Ви знайшли перший піксель миру, який будується власноруч. Цей цифровий квадрат більше не є порожнечею. Винесіть цю рамку у фізичний світ і визначте власну правду." },
             es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío. Lleva este marco al mundo físico y define tu propia verdad." },
             fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide. Portez ce cadre dans le monde physique et définissez votre vérité." },
@@ -168,18 +182,16 @@
         const innerCanvas = document.getElementById('inner-canvas');
 
         function addPixel(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
             const innerRect = innerCanvas.getBoundingClientRect();
             
-            // We measure relative to the INNER canvas for absolute placement
             const x = clientX - innerRect.left;
             const y = clientY - innerRect.top;
 
-            // Only add if within the actual black area
+            // Coordinate check relative to current inner area size
             if (x >= 0 && x <= innerRect.width && y >= 0 && y <= innerRect.height) {
                 const pixel = document.createElement('div');
                 pixel.className = 'pixel';
-                // Using percentage for placement ensures they stay relative during breathing
+                // Using percentage ensures the dot moves WITH the breathing area
                 pixel.style.left = (x / innerRect.width * 100) + '%';
                 pixel.style.top = (y / innerRect.height * 100) + '%';
                 
