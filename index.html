@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WHITE FRAME</title>
+    <title>THE WHITE FRAME</title>
     <style>
         :root {
             --bg-outside: #FFFFFF;
@@ -12,7 +12,6 @@
             --text-color: #000000;
         }
 
-        /* 1. Reset and Layout */
         body, html {
             margin: 0;
             padding: 0;
@@ -24,10 +23,10 @@
             grid-template-rows: 1fr auto auto;
             align-items: center;
             justify-items: center;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* 2. The Square */
+        /* The Square - Fixed 1:1 */
         .square-wrapper {
             width: 85vw;
             max-width: 450px;
@@ -39,17 +38,18 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
             touch-action: none;
+            overflow: hidden; /* Keep dots inside */
         }
 
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 3. Breathing Animation */
+        /* Breathing Animation */
         @keyframes breathe {
-            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
-            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.8); }
+            100% { opacity: 0.3; transform: scale(1); }
         }
 
         .pixel {
@@ -58,24 +58,25 @@
             height: 2px;
             background-color: #FFFFFF;
             pointer-events: none;
-            /* Default breathing for the initial dot */
             animation: breathe 3s infinite ease-in-out;
+            /* Center the dot on its own coordinate */
+            margin-left: -1px;
+            margin-top: -1px;
         }
 
-        /* 4. Text Area */
+        /* Text Area */
         .content-area {
             text-align: center;
             color: var(--text-color);
             max-width: 600px;
-            padding: 20px;
+            padding: 10px 20px;
         }
 
         .message-title {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: bold;
             font-size: 1.2rem;
-            line-height: 1.2;
         }
 
         .message-body {
@@ -84,7 +85,7 @@
             font-weight: 300;
         }
 
-        /* 5. Language Buttons */
+        /* Language Buttons */
         .lang-nav {
             display: flex;
             justify-content: center;
@@ -116,7 +117,7 @@
 <body>
 
     <div class="square-wrapper" id="canvas">
-        <div class="pixel" style="top: 50%; left: 50%;"></div>
+        <div class="pixel" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
     </div>
 
     <div class="content-area">
@@ -144,32 +145,49 @@
 
         const canvas = document.getElementById('canvas');
 
-        function addPixel(clientX, clientY) {
+        function addPixel(clientX, clientY, isTouchEvent = false) {
             const rect = canvas.getBoundingClientRect();
-            const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
+            const style = window.getComputedStyle(canvas);
+            const borderSize = parseInt(style.borderLeftWidth);
+            
+            let x, y;
 
+            if (isTouchEvent) {
+                // Mobile math: Use global coordinates minus the square's position
+                x = clientX - rect.left;
+                y = clientY - rect.top;
+            } else {
+                // Desktop math: Use layerX/Y or similar, but offsetX is best for "inside" clicks
+                // We re-calculate based on rect to be 100% safe from scrolling/borders
+                x = clientX - rect.left;
+                y = clientY - rect.top;
+            }
+
+            // Only place dot if inside the black area (excluding the border)
             if (x > borderSize && x < rect.width - borderSize && y > borderSize && y < rect.height - borderSize) {
                 const pixel = document.createElement('div');
                 pixel.className = 'pixel';
                 pixel.style.left = x + 'px';
                 pixel.style.top = y + 'px';
                 
-                // Randomize breathing pace (between 2s and 4.5s)
+                // Randomize pace and delay
                 const duration = (Math.random() * 2.5 + 2).toFixed(2);
                 pixel.style.animationDuration = `${duration}s`;
-                // Randomize start delay so they don't pulse together
                 pixel.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
                 
                 canvas.appendChild(pixel);
             }
         }
 
-        canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
+        // Desktop
+        canvas.addEventListener('mousedown', (e) => {
+            addPixel(e.clientX, e.clientY, false);
+        });
+        
+        // Mobile
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
-            addPixel(touch.clientX, touch.clientY);
+            addPixel(touch.clientX, touch.clientY, true);
         }, { passive: false });
 
         function setLang(lang) {
