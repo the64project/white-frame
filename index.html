@@ -19,17 +19,17 @@
             height: 100%;
             background-color: var(--bg-outside);
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            display: grid;
-            grid-template-rows: 1fr auto auto;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-items: center;
+            justify-content: center;
             overflow: hidden;
         }
 
-        /* The Square - Fixed 1:1 */
+        /* 1. Square - Locked 1:1 */
         .square-wrapper {
             width: 85vw;
-            max-width: 450px;
+            max-width: 420px;
             aspect-ratio: 1 / 1;
             background-color: var(--bg-inside);
             border: 36px solid var(--frame-color);
@@ -38,18 +38,19 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
             touch-action: none;
-            overflow: hidden; /* Keep dots inside */
+            overflow: hidden; 
         }
 
+        /* Pixel Cursor for Desktop */
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* Breathing Animation */
+        /* 2. Breathing Animation */
         @keyframes breathe {
-            0% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.8); }
-            100% { opacity: 0.3; transform: scale(1); }
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.8); }
+            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
         }
 
         .pixel {
@@ -59,48 +60,50 @@
             background-color: #FFFFFF;
             pointer-events: none;
             animation: breathe 3s infinite ease-in-out;
-            /* Center the dot on its own coordinate */
-            margin-left: -1px;
-            margin-top: -1px;
+            /* Center the dot on the coordinates */
+            transform-origin: center;
         }
 
-        /* Text Area */
+        /* 3. Text Area - Closer to the frame */
         .content-area {
             text-align: center;
             color: var(--text-color);
-            max-width: 600px;
-            padding: 10px 20px;
+            max-width: 500px;
+            margin-top: 25px; /* Reduced gap */
+            padding: 0 20px;
         }
 
         .message-title {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
         }
 
         .message-body {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             line-height: 1.5;
             font-weight: 300;
         }
 
-        /* Language Buttons */
+        /* 4. Language Buttons */
         .lang-nav {
+            margin-top: 20px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 20px;
+            gap: 6px;
+            padding-bottom: 20px;
         }
 
         .lang-btn {
             background: #ffffff;
             border: 1px solid #000000;
             color: #000000;
-            padding: 4px 10px;
+            padding: 4px 8px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: bold;
         }
 
@@ -110,14 +113,15 @@
         }
 
         @media (max-width: 600px) {
-            .square-wrapper { border-width: 24px; width: 80vw; }
+            .square-wrapper { border-width: 24px; width: 75vw; }
+            .content-area { margin-top: 15px; }
         }
     </style>
 </head>
 <body>
 
     <div class="square-wrapper" id="canvas">
-        <div class="pixel" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
+        <div class="pixel" style="top: 50%; left: 50%;"></div>
     </div>
 
     <div class="content-area">
@@ -134,7 +138,7 @@
             en: { name: "EN", title: "Congratulations, you can see through the darkness.", body: "You have discovered the first pixel of a peace that isn't handed down, but built by hand. This digital square is no longer a void, but a canvas for your perspective. Take this frame into the physical world and define your own truth." },
             ge: { name: "GE", title: "გილოცავთ, თქვენ ხედავთ სიბნელეში...", body: "თქვენ აღმოაჩინეთ მშვიდობის პირველი პიქსელი, რომელიც არ არის ვინმეს მიერ მოცემული, არამედ საკუთარი ხელით შექმნილი. გაიტანეთ ეს ჩარჩო ფიზიკურ სამყაროში და შექმენით თქვენი სიმართლე." },
             ua: { name: "UA", title: "Вітаємо, ви бачите крізь темряву...", body: "Ви знайшли перший піксель миру, який будується власноруч. Цей цифровий квадрат більше не є порожнечею. Винесіть цю рамку у фізичний світ і визначте власну правду." },
-            es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío, sino un lienzo para tu perspectiva. Lleva este marco al mundo físico y define tu propia verdad." },
+            es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío. Lleva este marco al mundo físico y define tu propia verdad." },
             fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide. Portez ce cadre dans le monde physique et définissez votre vérité." },
             de: { name: "DE", title: "Herzlichen Glückwunsch, Sie sehen durch die Dunkelheit.", body: "Sie haben das erste Pixel eines Friedens entdeckt, der von Hand gebaut wird. Dieses Quadrat ist keine Leere mehr. Definieren Sie Ihre eigene Wahrheit." },
             it: { name: "IT", title: "Congratulazioni, riesci a vedere attraverso l'oscurità.", body: "Hai scoperto il primo pixel di una pace costruita a mano. Questo quadrato non è più un vuoto. Porta questa cornice nel mondo fisico e definisci la tua verità." },
@@ -145,32 +149,23 @@
 
         const canvas = document.getElementById('canvas');
 
-        function addPixel(clientX, clientY, isTouchEvent = false) {
+        function addPixel(clientX, clientY) {
             const rect = canvas.getBoundingClientRect();
-            const style = window.getComputedStyle(canvas);
-            const borderSize = parseInt(style.borderLeftWidth);
+            const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
             
-            let x, y;
+            // Calculate coordinates relative to the full element (including border)
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
 
-            if (isTouchEvent) {
-                // Mobile math: Use global coordinates minus the square's position
-                x = clientX - rect.left;
-                y = clientY - rect.top;
-            } else {
-                // Desktop math: Use layerX/Y or similar, but offsetX is best for "inside" clicks
-                // We re-calculate based on rect to be 100% safe from scrolling/borders
-                x = clientX - rect.left;
-                y = clientY - rect.top;
-            }
-
-            // Only place dot if inside the black area (excluding the border)
+            // Strict boundary check: Only add if inside the black area
             if (x > borderSize && x < rect.width - borderSize && y > borderSize && y < rect.height - borderSize) {
                 const pixel = document.createElement('div');
                 pixel.className = 'pixel';
+                // Positioning relative to the square-wrapper
                 pixel.style.left = x + 'px';
                 pixel.style.top = y + 'px';
                 
-                // Randomize pace and delay
+                // Randomize pulse
                 const duration = (Math.random() * 2.5 + 2).toFixed(2);
                 pixel.style.animationDuration = `${duration}s`;
                 pixel.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
@@ -179,15 +174,12 @@
             }
         }
 
-        // Desktop
-        canvas.addEventListener('mousedown', (e) => {
-            addPixel(e.clientX, e.clientY, false);
-        });
+        // Using click/mousedown with clientX ensures absolute accuracy
+        canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
         
-        // Mobile
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
-            addPixel(touch.clientX, touch.clientY, true);
+            addPixel(touch.clientX, touch.clientY);
         }, { passive: false });
 
         function setLang(lang) {
