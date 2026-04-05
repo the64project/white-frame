@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>THE WHITE FRAME</title>
     <style>
         :root {
@@ -12,44 +12,41 @@
             --text-color: #000000;
         }
 
+        /* 1. Reset and Layout */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             background-color: var(--bg-outside);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: grid;
+            grid-template-rows: 1fr auto auto; /* Square | Text | Buttons */
+            align-items: center;
+            justify-items: center;
             overflow-x: hidden;
         }
 
-        /* 1. The Square - Forced 1:1 Aspect Ratio */
+        /* 2. The Square - Fixed Aspect Ratio */
         .square-wrapper {
-            width: 90vw;
-            max-width: 500px;
-            aspect-ratio: 1 / 1; /* This ensures it is always a square */
+            width: 85vw;
+            max-width: 450px;
+            aspect-ratio: 1 / 1;
             background-color: var(--bg-inside);
             border: 36px solid var(--frame-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             box-sizing: border-box;
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             -webkit-tap-highlight-color: transparent;
-            overflow: hidden; 
-            touch-action: none; /* Prevents scrolling while drawing pixels on mobile */
+            touch-action: none; /* Prevents mobile scrolling while tapping */
         }
 
-        /* 2. Pixel Cursor for Desktop */
+        /* 3. Pixel Cursor for Desktop */
         .square-wrapper:hover {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect width="2" height="2" fill="white"/></svg>'), auto;
         }
 
-        /* 3. The initial white pixel in the center */
+        /* 4. The initial white pixel */
         .initial-pixel {
             position: absolute;
             width: 2px;
@@ -62,7 +59,6 @@
             z-index: 2;
         }
 
-        /* 4. Style for user-added pixels */
         .added-pixel {
             position: absolute;
             width: 2px;
@@ -71,60 +67,57 @@
             pointer-events: none;
         }
 
-        /* 5. Text Area Below */
+        /* 5. Text Area - Moved to white space */
         .content-area {
             text-align: center;
             color: var(--text-color);
             max-width: 600px;
-            margin-top: 40px;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         .message-title {
             display: block;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: bold;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             line-height: 1.2;
-            letter-spacing: -0.5px;
         }
 
         .message-body {
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            line-height: 1.5;
             font-weight: 300;
         }
 
+        /* 6. Language Buttons */
         .lang-nav {
-            margin-top: 30px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 8px;
-            padding-bottom: 40px;
+            padding: 20px;
         }
 
         .lang-btn {
             background: #ffffff;
             border: 1px solid #000000;
             color: #000000;
-            padding: 5px 12px;
+            padding: 4px 10px;
             cursor: pointer;
             font-size: 0.7rem;
             font-weight: bold;
-            transition: all 0.2s ease;
         }
 
-        .lang-btn:hover, .lang-btn.active {
+        .lang-btn.active {
             background: #000000;
             color: #ffffff;
         }
 
-        /* Adjust border for smaller screens to keep inner area usable */
         @media (max-width: 600px) {
-            .square-wrapper { border-width: 24px; }
-            .message-title { font-size: 1.1rem; }
-            .message-body { font-size: 0.85rem; }
+            .square-wrapper { 
+                border-width: 24px; 
+                width: 80vw;
+            }
         }
     </style>
 </head>
@@ -149,11 +142,11 @@
             ge: { name: "GE", title: "გილოცავთ, თქვენ ხედავთ სიბნელეში...", body: "თქვენ აღმოაჩინეთ მშვიდობის პირველი პიქსელი, რომელიც არ არის ვინმეს მიერ მოცემული, არამედ საკუთარი ხელით შექმნილი. გაიტანეთ ეს ჩარჩო ფიზიკურ სამყაროში და შექმენით თქვენი სიმართლე." },
             ua: { name: "UA", title: "Вітаємо, ви бачите крізь темряву...", body: "Ви знайшли перший піксель миру, який будується власноруч. Цей цифровий квадрат більше не є порожнечею. Винесіть цю рамку у фізичний світ і визначте власну правду." },
             es: { name: "ES", title: "Felicidades, puedes ver a través de la oscuridad.", body: "Has descubierto el primer píxel de una paz que se construye a mano. Este cuadrado digital ya no es un vacío, sino un lienzo para tu perspectiva. Lleva este marco al mundo físico y define tu propia verdad." },
-            fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide, mais une toile pour votre perspective. Portez ce cadre dans le monde physique et définissez votre vérité." },
-            de: { name: "DE", title: "Herzlichen Glückwunsch, Sie sehen durch die Dunkelheit.", body: "Sie haben das erste Pixel eines Friedens entdeckt, der von Hand gebaut wird. Dieses Quadrat ist keine Leere mehr. Bringen Sie diesen Rahmen in die Welt und definieren Sie Ihre eigene Wahrheit." },
+            fr: { name: "FR", title: "Félicitations, vous voyez à travers les ténèbres.", body: "Vous avez découvert le premier pixel d'une paix construite à la main. Ce carré n'est plus un vide. Portez ce cadre dans le monde physique et définissez votre vérité." },
+            de: { name: "DE", title: "Herzlichen Glückwunsch, Sie sehen durch die Dunkelheit.", body: "Sie haben das erste Pixel eines Friedens entdeckt, der von Hand gebaut wird. Dieses Quadrat ist keine Leere mehr. Definieren Sie Ihre eigene Wahrheit." },
             it: { name: "IT", title: "Congratulazioni, riesci a vedere attraverso l'oscurità.", body: "Hai scoperto il primo pixel di una pace costruita a mano. Questo quadrato non è più un vuoto. Porta questa cornice nel mondo fisico e definisci la tua verità." },
             ar: { name: "AR", title: "تهانينا، يمكنك الرؤية من خلال الظلام", body: "لقد اكتشفت البكسل الأول لسلام يُبنى باليد. هذا المربع لم يعد فراغاً، بل لوحة لمنظورك. خذ هذا الإطار إلى العالم المادي وحدد حقيقتك الخاصة." },
-            he: { name: "HE", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד. הריבוע הזה אינו עוד ריק, אלא קנבס לנקודת המבט שלך. קח את המסגרת הזו לעולם הפיזי והגדר את האמת שלך." },
+            he: { name: "HE", title: "ברכותינו, אתה יכול לראות מבעד לחשיכה", body: "גילית את הפיקסל הראשון של שלום שנבנה ביד. הריבוע הזה אינו עוד ריק. קח את המסגרת הזו לעולם הפיזי והגדר את האמת שלך." },
             zh: { name: "ZH", title: "恭喜你，你看穿了黑暗。", body: "你发现了一个亲手构建的和平的第一个像素。这个数字方块不再是真空。将这个框架带入现实世界，定义你自己的真相。" }
         };
 
@@ -163,25 +156,24 @@
             const rect = canvas.getBoundingClientRect();
             const borderSize = parseInt(window.getComputedStyle(canvas).borderLeftWidth);
             
-            // X and Y relative to the absolute top-left of the black area
-            const x = clientX - rect.left - borderSize;
-            const y = clientY - rect.top - borderSize;
+            // Precise coordinate math
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
 
-            const innerWidth = rect.width - (borderSize * 2);
-            const innerHeight = rect.height - (borderSize * 2);
-
-            // Bounds check for the black area
-            if (x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight) {
+            // Check if click is inside the black inner square boundaries
+            if (x > borderSize && x < rect.width - borderSize && y > borderSize && y < rect.height - borderSize) {
                 const pixel = document.createElement('div');
                 pixel.className = 'added-pixel';
-                pixel.style.left = (x + borderSize) + 'px';
-                pixel.style.top = (y + borderSize) + 'px';
+                pixel.style.left = x + 'px';
+                pixel.style.top = y + 'px';
                 canvas.appendChild(pixel);
             }
         }
 
+        // Desktop Listener
         canvas.addEventListener('mousedown', (e) => addPixel(e.clientX, e.clientY));
         
+        // Mobile Listener
         canvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             addPixel(touch.clientX, touch.clientY);
@@ -192,13 +184,7 @@
             document.getElementById('body').innerText = translations[lang].body;
             
             const content = document.getElementById('content');
-            if (lang === 'ar' || lang === 'he') {
-                content.style.direction = 'rtl';
-                content.style.textAlign = 'right';
-            } else {
-                content.style.direction = 'ltr';
-                content.style.textAlign = 'center';
-            }
+            content.style.direction = (lang === 'ar' || lang === 'he') ? 'rtl' : 'ltr';
 
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.id === lang);
